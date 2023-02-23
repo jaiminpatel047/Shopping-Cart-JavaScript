@@ -64,10 +64,9 @@ for(let i = 0; i < addCardProduct.length; i++){
 
     // add to cart
     button.addEventListener('click', (event) => {
-        let btn = event.target.parentElement;
-        let shopingButton = btn.parentElement;
-        let productTitle = shopingButton.querySelectorAll('.product-lable')[0].innerText;
-        let productPrice = shopingButton.querySelectorAll('.product-price')[0].innerText;
+		const product = event.currentTarget.parentElement.querySelector('.product-title');
+		let productTitle = product.querySelectorAll('.product-lable')[0].innerText;
+        let productPrice = product.querySelectorAll('.product-price')[0].innerText;
         addProductToCart(productTitle, productPrice);
         updateAmout();
     })
@@ -85,16 +84,16 @@ function addProductToCart(productTitle, productPrice){
    let shopingCart = document.createElement('div');
    shopingCart.classList.add('cart-wrapper'); 
    shopingCart.innerHTML = cartBoxContain;
-   let cartItem = document.querySelectorAll('.cart-product-list')[0];
-   let cartNameProduct = cartItem.getElementsByClassName('cart-product-name');
-  
-
-   for(let i = 0; i < cartNameProduct.length; i++){
-       alert('you have Aleardy Add this to cart');
-       return;
+   let cartItem = document.querySelector('#cart-product-list');
+   if (cartItem.children.length > 0) {
+  		let cartNameProduct = cartItem.querySelectorAll('.cart-product-name');
+		for (let item of cartNameProduct) {
+			if (item.innerText === productTitle) {
+				alert('you have Already Add this to cart');
+      			return;
+			}
+		}
    }
-
-  console.log(shopingCart);
   cartItem.append(shopingCart);
   shopingCart.querySelectorAll('.cart-product-remove')[0].addEventListener('click', removeFunction);
   shopingCart.querySelectorAll('.cart-qty')[0].addEventListener('change', removeFunction);
@@ -102,17 +101,22 @@ function addProductToCart(productTitle, productPrice){
 
 
 function updateAmout(){
-    let cartContanet = document.getElementsByClassName('cart-product-list')[0];
-    let cartBoxs = cartContanet.querySelectorAll('.cart-product-price');
-    var total = 0;
+    let cartContanet = document.querySelector('#cart-product-list');
+	if (cartContanet.children.length > 0) {
+		let cartBoxs = cartContanet.querySelectorAll('.cart-product-price');
+		var total = 0;
 
-    for(let i = 0; i < cartBoxs.length; i++){
-        let cartBox = cartBoxs[i];
-        let priceElement = cartBox.querySelectorAll('.cart-price')[0];
-        var price = parseFloat(priceElement.innerText.replace('₹', ''));
-        let qytElement = cartBox.querySelectorAll('.cart-qty')[0];
-        var quantity = qytElement.value;
-    }
-        var total = Math.round(total + price * quantity) * 100 / 100;
-        document.getElementById('totalAmount').innerText = '₹' + total;
+		for(let i = 0; i < cartBoxs.length; i++){
+			let cartBox = cartBoxs[i];
+			let priceElement = cartBox.querySelectorAll('.cart-price')[0];
+			var price = parseFloat(priceElement.innerText.replace('₹', ''));
+			let qytElement = cartBox.querySelectorAll('.cart-qty')[0];
+			var quantity = qytElement.value;
+			var total = Math.round(total + price * quantity) * 100 / 100;
+			document.getElementById('totalAmount').innerText = '₹' + total;
+		}	
+	} else {
+		document.getElementById('totalAmount').innerText = '₹0';
+	}
+    
 }
